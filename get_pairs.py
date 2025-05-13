@@ -1,5 +1,6 @@
 import requests
 import json
+import re
 
 BYBIT_API_URL = 'https://api.bybit.com/v5/market/tickers?category=linear'
 MAX_PAIRS = 100  # Parameter to limit the number of pairs
@@ -16,9 +17,11 @@ def fetch_bybit_futures_pairs(max_pairs):
             # Ensure item is a dictionary
             if isinstance(item, dict):
                 symbol = item.get('symbol')
-                # Filter only USDT pairs
-                if 'USDT' not in symbol:
-                    continue
+      
+                # Filtering condition update:
+                if 'USDT' not in symbol or re.search(r'-\d{2}[A-Za-z]{3}\d{2}', symbol):
+                  continue
+
                 try:
                     volume_24h = float(item.get('turnover24h', 0))  # Updated key to 'turnover24h'
                     last_price = float(item.get('lastPrice', 0))    # Updated key to 'lastPrice'
